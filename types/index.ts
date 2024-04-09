@@ -6,7 +6,7 @@ export type PriceHistoryItem = {
     email: string;
   };
   
-  export type Product = {
+  export type ProductType = {
     _id?: string;
     url: string;
     currency: string;
