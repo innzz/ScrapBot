@@ -1,10 +1,29 @@
 "use client";
-import React, { Fragment, useState } from "react";
+import React, { FormEvent, Fragment, useState } from "react";
 import { Dialog, Transition } from "@headlessui/react";
 import Image from "next/image";
+import { addUserEmailToProduct } from "@/lib/actions";
 
-const Modal = () => {
+interface Props {
+    productId: string
+}
+
+const Modal = ({productId}: Props) => {
   let [isOpen, setIsOpen] = useState(true);
+  let [isSubmitting, setIsSubmitting] = useState(false);
+  let [email, setEmail] = useState("");
+
+  const handleSubmit = async (e: FormEvent<HTMLFormElement>) =>{
+    e.preventDefault();
+    setIsSubmitting(true);
+
+    //addUserEmailToProduct
+    await addUserEmailToProduct(productId,email)
+
+    setIsSubmitting(false);
+    setEmail("");
+    closeModal();
+  }
   const openModal = () => setIsOpen(true);
   const closeModal = () => setIsOpen(false);
   return (
@@ -72,10 +91,12 @@ const Modal = () => {
                     Stay updated with product pricing alerts right in your
                     inbox!
                   </h4>
-                  <p className="text-sm text-gray-600 mt-2">Never miss a bragain again with our timely alerts!</p>
+                  <p className="text-sm text-gray-600 mt-2">
+                    Never miss a bragain again with our timely alerts!
+                  </p>
                 </div>
 
-                <form className="flex flex-col mt-5">
+                <form className="flex flex-col mt-5" onSubmit={handleSubmit}>
                   <label
                     htmlFor="email"
                     className="text-sm font-medium text-gray-700"
@@ -90,10 +111,21 @@ const Modal = () => {
                       height={18}
                     />
 
-                    <input type="email" required id="email" placeholder="Enter your email address" className="dialog-input" />
+                    <input
+                      type="email"
+                      required
+                      id="email"
+                      placeholder="Enter your email address"
+                      className="dialog-input"
+                      value={email}
+                      onChange={(e)=> setEmail(e.target.value)}
+                      
+                    />
                   </div>
 
-                  <button type="submit" className="dialog-btn">Track</button>
+                  <button type="submit" className="dialog-btn">
+                    {isSubmitting ? "Submitting..." : "Track"}
+                  </button>
                 </form>
               </div>
             </Transition.Child>
